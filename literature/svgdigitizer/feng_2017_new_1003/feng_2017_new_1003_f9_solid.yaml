@@ -1,5 +1,5 @@
 experimental:
-  tags: 
+  tags:
     - BCV
   instrumentation:
     - type: potentiostat
@@ -8,6 +8,13 @@ experimental:
     - type: voltage function generator
       manufacturer: Agilent
       name: 33220A
+  operationParameters:
+    temperature:
+      value: 25
+      unit: degC
+      uncertainty:
+        value: 1
+        unit: degC
 system:
   type: electrochemical
   electrolyte:
@@ -32,12 +39,6 @@ system:
         concentration:
           value: 0.1
           unit: mol / l
-    temperature:
-      value: 25
-      unit: degC
-      uncertainty:
-        value: 1
-        unit: degC
   electrodes:
     - name: RE
       function: reference electrode
@@ -46,7 +47,7 @@ system:
       function: counter electrode
       material: Pt wire
       source:
-        manufacturer: Alfa Aesar  
+        manufacturer: Alfa Aesar
       purity:
         value: 99.9
         unit: pct
@@ -70,7 +71,8 @@ source:
   url: https://doi.org/10.1134/S1023193517090051
 curation:
   process:
-  - role: curator
-    name: Valerie Link
-    orcid: https://orcid.org/0009-0004-3341-1452
-    date: 2025-02-21
+    - role: curator
+      name: Valerie Link
+      orcid: https://orcid.org/0009-0004-3341-1452
+      date: 2025-02-21
+echemdbSchemaVersion: 0.8.2

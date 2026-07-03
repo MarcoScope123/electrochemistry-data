@@ -2,9 +2,13 @@
 # Details on the meta data structure can be found on https://github.com/echemdb/metadata-schema
 experimental:
   instrumentation:
-  - manufacturer: Zahner Elektrik
-    name: Zahner IM6
-    type: potentiostat
+    - manufacturer: Zahner Elektrik
+      name: Zahner IM6
+      type: potentiostat
+  operationParameters:
+    temperature:
+      unit: K
+      value: 298.15
 system:
   type: electrochemical
   electrodes:
@@ -39,23 +43,20 @@ system:
         manufacturer: MaTecK GmbH
   electrolyte:
     components:
-    - name: MPPip-TFSI
-      chemicalIdentifiers:
-        cas: 608140-12-1
-        inchi: InChI=1S/C9H20N.C2F6NO4S2/c1-3-7-10(2)8-5-4-6-9-10;3-1(4,5)14(10,11)9-15(12,13)2(6,7)8/h3-9H2,1-2H3;/q+1;-1
-      proportion:
-        unit: volume percent
-        value: 100
-      source:
-        supplier: IoLiTec
-        purity:
+      - name: MPPip-TFSI
+        chemicalIdentifiers:
+          cas: 608140-12-1
+          inchi: InChI=1S/C9H20N.C2F6NO4S2/c1-3-7-10(2)8-5-4-6-9-10;3-1(4,5)14(10,11)9-15(12,13)2(6,7)8/h3-9H2,1-2H3;/q+1;-1
+        proportion:
+          unit: volume percent
+          value: 100
+        source:
+          supplier: IoLiTec
+          purity:
             grade: '>99%'
-      purity:
-        refinement: Vacuum dried at 80°C for 24 h.
-      type: solvent
-    temperature:
-      unit: K
-      value: 298.15
+        purity:
+          refinement: Vacuum dried at 80°C for 24 h.
+        type: solvent
     type: ionic liquid
 source:
   citationKey: berger_2017_lithium_261
@@ -66,11 +67,12 @@ source:
     - EQCM
 curation:
   process:
-  - role: curator
-    name: Jerome Mayer
-    orcid: https://orcid.org/0000-0002-7451-9994
-    date: 2022-01-10
-  - role: reviewer
-    name: Albert Engstfeld
-    orcid: https://orcid.org/0000-0002-9686-3948
-    date: 2022-05-22
+    - role: curator
+      name: Jerome Mayer
+      orcid: https://orcid.org/0000-0002-7451-9994
+      date: 2022-01-10
+    - role: reviewer
+      name: Albert Engstfeld
+      orcid: https://orcid.org/0000-0002-9686-3948
+      date: 2022-05-22
+echemdbSchemaVersion: 0.8.2
