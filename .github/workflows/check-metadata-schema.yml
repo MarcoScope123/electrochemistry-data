@@ -30,7 +30,7 @@ jobs:
       - name: Get current SCHEMA_VERSION from validate.py
         id: current
         run: |
-          VERSION=$(grep -oP 'SCHEMA_VERSION\s*=\s*"tags/\K[^"]+' echemdb_ecdata/validate.py)
+          VERSION=$(grep -oP 'SCHEMA_VERSION\s*=\s*"\K[^"]+' echemdb_ecdata/validate.py)
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Open PR if versions differ
@@ -59,10 +59,14 @@ jobs:
 
           git checkout -b "$BRANCH"
 
-          sed -i "s|SCHEMA_VERSION = \"tags/${CURRENT}\"|SCHEMA_VERSION = \"tags/${LATEST}\"|" \
+          sed -i "s|SCHEMA_VERSION = \"${CURRENT}\"|SCHEMA_VERSION = \"${LATEST}\"|" \
             echemdb_ecdata/validate.py
 
-          git add echemdb_ecdata/validate.py
+          # Keep the mdstools git dependency pinned to the same release.
+          sed -i "s|\(mdstools = { git = .*tag = \"\)${CURRENT}\(\" }\)|\1${LATEST}\2|" \
+            pyproject.toml
+
+          git add echemdb_ecdata/validate.py pyproject.toml
           git commit -m "Update metadata-schema from ${CURRENT} to ${LATEST}"
           git push origin "$BRANCH"
 
@@ -70,8 +74,11 @@ jobs:
             --title "Update metadata-schema to ${LATEST}" \
             --body "A new release of [echemdb/metadata-schema](https://github.com/echemdb/metadata-schema/releases/tag/${LATEST}) is available.
 
-          This PR updates \`SCHEMA_VERSION\` in \`echemdb_ecdata/validate.py\` from \`${CURRENT}\` to \`${LATEST}\`.
+          This PR updates \`SCHEMA_VERSION\` in \`echemdb_ecdata/validate.py\` and the \`mdstools\` dependency pin in \`pyproject.toml\` from \`${CURRENT}\` to \`${LATEST}\`.
 
-          Please review the [release notes](https://github.com/echemdb/metadata-schema/releases/tag/${LATEST}) and verify that the schema changes are compatible before merging." \
+          Before merging:
+          - Run \`pixi lock\` locally and push the updated \`pixi.lock\` (the mdstools pin changed).
+          - If the release contains breaking schema changes, run \`pixi run -e dev migrate-metadata\` and commit the migrated files.
+          - Review the [release notes](https://github.com/echemdb/metadata-schema/releases/tag/${LATEST}) and verify that the schema changes are compatible." \
             --head "$BRANCH" \
             --base main

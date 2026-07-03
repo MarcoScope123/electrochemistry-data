@@ -23,9 +23,6 @@ system:
     ph:
       value: 1.041
       comment: Estimated with CurTiPot on extraction from publication using a temperature of 25°C.
-    temperature:
-      value: 25
-      unit: deg_C
     comment: The electrolyte was at room temperature.
   electrodes:
     - name: REF
@@ -47,8 +44,14 @@ source:
   url: https://www.uni-ulm.de/fileadmin/website_uni_ulm/nawi.inst.080/mitarbeiter/Kibler/KiblerSingleCrystals2003.pdf
 curation:
   process:
-  - role: curator
-    name: Johannes M. Hermann
-    orcid: https://orcid.org/0000-0001-7119-1295
-    date: 2023-02-10
+    - role: curator
+      name: Johannes M. Hermann
+      orcid: https://orcid.org/0000-0001-7119-1295
+      date: 2023-02-10
 
+experimental:
+  operationParameters:
+    temperature:
+      value: 25
+      unit: deg_C
+echemdbSchemaVersion: 0.8.2

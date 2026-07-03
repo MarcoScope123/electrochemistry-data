@@ -30,9 +30,6 @@ system:
     ph:
       value: -1.078
       comment: Estimated with CurTiPot on extraction from publication using a temperature of 25°C.
-    temperature:
-      value: 25
-      unit: deg_C
     comment: The electrolyte was at room temperature.
   electrodes:
     - name: REF
@@ -61,11 +58,17 @@ source:
   url: https://doi.org/10.1016/j.elecom.2006.03.001
 curation:
   process:
-  - role: curator
-    name: Johannes M. Hermann
-    orcid: https://orcid.org/0000-0001-7119-1295
-    date: 2021-10-11
-  - role: reviewer
-    name: Albert Engstfeld
-    orcid: https://orcid.org/0000-0002-9686-3948
-    date: 2022-06-22
+    - role: curator
+      name: Johannes M. Hermann
+      orcid: https://orcid.org/0000-0001-7119-1295
+      date: 2021-10-11
+    - role: reviewer
+      name: Albert Engstfeld
+      orcid: https://orcid.org/0000-0002-9686-3948
+      date: 2022-06-22
+experimental:
+  operationParameters:
+    temperature:
+      value: 25
+      unit: deg_C
+echemdbSchemaVersion: 0.8.2

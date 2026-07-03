@@ -6,7 +6,7 @@ system:
     - name: CE
       function: counter electrode
       material: Pt
-      shape: 
+      shape:
         type: wire
     - name: REF
       function: reference electrode
@@ -18,34 +18,37 @@ system:
       material: Pt
   electrolyte:
     components:
-    - name: NaOH
-      type: base
-      chemicalIdentifiers:
-        cas: 1310-73-2
-        smiles: '[Na+].[OH-]'
-    - name: water
-      type: solvent
-    - name: KClO4
-      type: salt
-      chemicalIdentifiers:
-        cas: 7778-74-7
-        smiles: '[K+].[ClO4-]'
+      - name: NaOH
+        type: base
+        chemicalIdentifiers:
+          cas: 1310-73-2
+          smiles: '[Na+].[OH-]'
+      - name: water
+        type: solvent
+      - name: KClO4
+        type: salt
+        chemicalIdentifiers:
+          cas: 7778-74-7
+          smiles: '[K+].[ClO4-]'
     ph:
       value: 8.2
-    temperature:
-      unit: K
-      value: 298.15
     type: aqueous
 source:
   citationKey: mello_2018_bromide_18562
   url: https://doi.org/10.1021/acs.jpcc.8b05685
 curation:
   process:
-  - role: curator
-    name: Markus Schilling
-    orcid: https://orcid.org/0000-0003-2684-3711
-    date: 2021-12-01
-  - role: reviewer
-    name: Albert Engstfeld
-    orcid: https://orcid.org/0000-0002-9686-3948
-    date: 2022-01-21
+    - role: curator
+      name: Markus Schilling
+      orcid: https://orcid.org/0000-0003-2684-3711
+      date: 2021-12-01
+    - role: reviewer
+      name: Albert Engstfeld
+      orcid: https://orcid.org/0000-0002-9686-3948
+      date: 2022-01-21
+experimental:
+  operationParameters:
+    temperature:
+      unit: K
+      value: 298.15
+echemdbSchemaVersion: 0.8.2

@@ -2,10 +2,14 @@
 # Details on the meta data structure can be found on https://github.com/echemdb/metadata-schema
 experimental:
   tags:
-  - BCV
+    - BCV
   instrumentation:
-  - name: PotentiostatIV
-    type: potentiostat
+    - name: PotentiostatIV
+      type: potentiostat
+  operationParameters:
+    temperature:
+      unit: K
+      value: 298.15
 system:
   type: electrochemical
   electrodes:
@@ -34,26 +38,23 @@ system:
           - Flame annealing with butane flame
   electrolyte:
     components:
-    - name: water
-      proportion:
-        unit: volume percent
-        value: 100
-      source:
-        quality: ultrapure water
-        refinement: Millipore Milli-Q
-      type: solvent
-    - concentration:
-        unit: mol / l
-        value: 0.1
-      name: KBr
-      source:
-        supplier: Alfa Aesar
-        purity:
-          grade: puratronic
-      type: base
-    temperature:
-      unit: K
-      value: 298.15
+      - name: water
+        proportion:
+          unit: volume percent
+          value: 100
+        source:
+          quality: ultrapure water
+          refinement: Millipore Milli-Q
+        type: solvent
+      - concentration:
+          unit: mol / l
+          value: 0.1
+        name: KBr
+        source:
+          supplier: Alfa Aesar
+          purity:
+            grade: puratronic
+        type: base
     type: aqueous
   electrochemicalCell:
     type: electrochemical microcalorimetry cell
@@ -92,8 +93,9 @@ dataDescription:
       unit: A
 curation:
   process:
-  - role: experimentalist
-    name: Marco Schoenig
-    orcid: https://orcid.org/0000-0002-4470-6705
-    date: 2026-03-10
+    - role: experimentalist
+      name: Marco Schoenig
+      orcid: https://orcid.org/0000-0002-4470-6705
+      date: 2026-03-10
 
+echemdbSchemaVersion: 0.8.2

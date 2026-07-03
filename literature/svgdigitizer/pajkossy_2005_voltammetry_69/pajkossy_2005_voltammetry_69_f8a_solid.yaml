@@ -8,7 +8,7 @@ source:
   url: https://doi.org/10.1016/j.jelechem.2005.03.019
   citationKey: pajkossy_2005_voltammetry_69
   techniques:
-  - CV
+    - CV
 system:
   type: electrochemical
   electrolyte:
@@ -27,12 +27,6 @@ system:
         type: gas
         purity:
           grade: 5N
-    temperature:
-      value: 20
-      unit: degC
-      uncertainty:
-        value: 1.0
-        unit: degC
     comment: details see https://doi.org/10.1016/0022-0728(96)04700-6
   electrodes:
     - name: SCE
@@ -47,6 +41,15 @@ system:
       crystallographicOrientation: '111'
       preparationProcedure:
         description:
-        - High temperature annealing at about 1900°C in a nitrogen hydrogen atmosphere for 100s. 
-        - Transferred to the electrochemical cell under 5N argon or in a 6N nitrogen stream.
-        - Hanging meniscus configuration.
+          - High temperature annealing at about 1900°C in a nitrogen hydrogen atmosphere for 100s.
+          - Transferred to the electrochemical cell under 5N argon or in a 6N nitrogen stream.
+          - Hanging meniscus configuration.
+experimental:
+  operationParameters:
+    temperature:
+      value: 20
+      unit: degC
+      uncertainty:
+        value: 1.0
+        unit: degC
+echemdbSchemaVersion: 0.8.2

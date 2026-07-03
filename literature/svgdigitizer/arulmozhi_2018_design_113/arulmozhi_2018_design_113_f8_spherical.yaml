@@ -8,7 +8,7 @@ source:
   url: https://doi.org/10.1007/s12678-017-0426-2
   citationKey: arulmozhi_2018_design_113
   techniques:
-  - CV
+    - CV
 system:
   type: electrochemical
   electrolyte:
@@ -35,9 +35,6 @@ system:
           supplier: Merck
         purity:
           grade: suprapur
-    temperature:
-      value: 293
-      unit: K
   electrodes:
     - name: WE
       function: working electrode
@@ -59,3 +56,9 @@ system:
     - name: CE
       function: counter electrode
       material: Pt
+experimental:
+  operationParameters:
+    temperature:
+      value: 293
+      unit: K
+echemdbSchemaVersion: 0.8.2

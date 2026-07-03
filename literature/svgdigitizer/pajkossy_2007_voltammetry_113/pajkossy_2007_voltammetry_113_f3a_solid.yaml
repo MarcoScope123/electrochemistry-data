@@ -8,7 +8,7 @@ source:
   url: https://doi.org/10.1016/j.jelechem.2006.04.016
   citationKey: pajkossy_2007_voltammetry_113
   techniques:
-  - CV
+    - CV
 system:
   type: electrochemical
   electrolyte:
@@ -31,12 +31,6 @@ system:
           grade: 5N
     ph:
       value: 4
-    temperature:
-      value: 20
-      unit: degC
-      uncertainty:
-        value: 1.0
-        unit: degC
     comment: details see https://doi.org/10.1016/0022-0728(96)04700-6
   electrodes:
     - name: WE
@@ -52,7 +46,16 @@ system:
           unit: mm
       preparationProcedure:
         description:
-        - High temperature annealing at about 1900°C in a nitrogen-hydrogen atmosphere for 1 min.
-        - Cool down in the gas stream for 2 min.
-        - Transferred to the electrochemical cell under protecting gas stream.
-        - Hanging meniscus configuration.
+          - High temperature annealing at about 1900°C in a nitrogen-hydrogen atmosphere for 1 min.
+          - Cool down in the gas stream for 2 min.
+          - Transferred to the electrochemical cell under protecting gas stream.
+          - Hanging meniscus configuration.
+experimental:
+  operationParameters:
+    temperature:
+      value: 20
+      unit: degC
+      uncertainty:
+        value: 1.0
+        unit: degC
+echemdbSchemaVersion: 0.8.2

@@ -166,15 +166,18 @@ pixi run -e dev validate-bib-keys  # Check bib keys match expected identifiers
 pixi run -e dev validate-bib-utf8  # Check for LaTeX accent encodings
 
 # Use specific schema version (default: echemdb_ecdata.validate.SCHEMA_VERSION)
-pixi run -e dev validate-input --version tags/0.3.3
-pixi run -e dev validate-generated --version head/branch-name
+# The version is a metadata-schema release tag (e.g. 0.8.0) or branch name (e.g. main)
+pixi run -e dev validate-input --version 0.8.0
+pixi run -e dev validate-generated --version main
 ```
 
 Validation commands:
-- Display each file being validated with `--verbose` flag
-- Use Python `pathlib.rglob()` + `subprocess` for cross-platform compatibility
+- Use the validation tools of the metadata-schema repository (`mdstools`): the
+  JSON Schema is fetched once per run and all files are validated in-process,
+  including the instrument-reference check for `operationParameters`
 - Return non-zero exit code when validation fails or files are missing
-- Validate against echemdb-metadata-schema (configurable version)
+- Schema validation requires the dev environment (`mdstools` needs Python >= 3.11);
+  keep the `mdstools` git tag in `pyproject.toml` in sync with `SCHEMA_VERSION`
 
 ### Fix Utilities
 
@@ -196,6 +199,13 @@ pixi run -e dev fix-identifiers-dry-run  # Preview only
 # Renames in both literature/svgdigitizer/ and data/generated/svgdigitizer/
 pixi run -e dev rename-identifiers OLD_NAME NEW_NAME
 # Or directly: bash util/rename_identifiers.sh OLD_NAME NEW_NAME
+
+# Migrate input YAML metadata across breaking metadata-schema releases.
+# Applies the migration steps from mdstools.schema.migrations (e.g. the 0.8.0
+# move of system.electrolyte.temperature to experimental.operationParameters)
+# and stamps rewritten files with echemdbSchemaVersion.
+pixi run -e dev migrate-metadata          # Apply changes
+pixi run -e dev migrate-metadata-dry-run  # Preview only
 ```
 
 ### Development Tasks

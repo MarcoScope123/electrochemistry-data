@@ -8,17 +8,24 @@ source:
   url: https://doi.org/10.1016/0039-6028(85)90985-9
   citationKey: beden_1985_voltammetric_822
   techniques:
-  - CV
+    - CV
 experimental:
-  tags: 
-  - BCV
+  tags:
+    - BCV
   instrumentation:
     - type: potentiostat
       name: PGS 77
     - type: programmer
       name: PAR 175
     - type: recorder
-      name: LINSEIS LY 1700 
+      name: LINSEIS LY 1700
+  operationParameters:
+    temperature:
+      value: 25
+      unit: degC
+      uncertainty:
+        value: 0.1
+        unit: degC
 system:
   type: electrochemical
   electrolyte:
@@ -37,12 +44,6 @@ system:
           supplier: Merck
         purity:
           grade: suprapur
-    temperature:
-      value: 25
-      unit: degC
-      uncertainty:
-        value: 0.1
-        unit: degC
   electrodes:
     - name: RE
       function: reference electrode
@@ -67,3 +68,4 @@ system:
         description:
           - Oriented surface polished with fine alumina down to 0.05 µm.
           - Rinsed with ultrapure water and transfered protected by a water droplet.
+echemdbSchemaVersion: 0.8.2

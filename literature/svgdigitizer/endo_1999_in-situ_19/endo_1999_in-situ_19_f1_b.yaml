@@ -6,7 +6,7 @@ system:
     - name: CE
       function: counter electrode
       material: Pt
-      shape: 
+      shape:
         type: wire
     - name: REF
       function: reference electrode
@@ -23,43 +23,46 @@ system:
         manufacturer: Techno Chemics
   electrolyte:
     components:
-    - concentration:
-        unit: umol / l
-        value: 50
-      name: NaBr
-      type: salt
-      chemicalIdentifiers:
-        cas: 7647-15-6
-        smiles: '[Na+].[Br-]'
-    - name: water
-      type: solvent
-      chemicalIdentifiers:
-        cas: 7732-18-5
-        smiles: O
-    - concentration:
-        unit: mol / l
-        value: 0.05
-      name: NaOH
-      type: base
-      chemicalIdentifiers:
-        cas: 1310-73-2
-        smiles: '[Na+].[OH-]'
-    temperature:
-      unit: K
-      value: 298.15
+      - concentration:
+          unit: umol / l
+          value: 50
+        name: NaBr
+        type: salt
+        chemicalIdentifiers:
+          cas: 7647-15-6
+          smiles: '[Na+].[Br-]'
+      - name: water
+        type: solvent
+        chemicalIdentifiers:
+          cas: 7732-18-5
+          smiles: O
+      - concentration:
+          unit: mol / l
+          value: 0.05
+        name: NaOH
+        type: base
+        chemicalIdentifiers:
+          cas: 1310-73-2
+          smiles: '[Na+].[OH-]'
     type: aqueous
 source:
   citationKey: endo_1999_in-situ_19
   url: https://doi.org/10.1016/S0022-0728(99)00148-5
   techniques:
-  - EXAFS
+    - EXAFS
 curation:
   process:
-  - role: curator
-    name: Markus Schilling
-    orcid: https://orcid.org/0000-0003-2684-3711
-    date: 2021-10-25
-  - role: reviewer
-    name: Albert Engstfeld
-    orcid: https://orcid.org/0000-0002-9686-3948
-    date: 2022-01-21
+    - role: curator
+      name: Markus Schilling
+      orcid: https://orcid.org/0000-0003-2684-3711
+      date: 2021-10-25
+    - role: reviewer
+      name: Albert Engstfeld
+      orcid: https://orcid.org/0000-0002-9686-3948
+      date: 2022-01-21
+experimental:
+  operationParameters:
+    temperature:
+      unit: K
+      value: 298.15
+echemdbSchemaVersion: 0.8.2

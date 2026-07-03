@@ -2,7 +2,11 @@
 # Details on the meta data structure can be found on https://github.com/echemdb/metadata-schema
 experimental:
   tags:
-  - BCV
+    - BCV
+  operationParameters:
+    temperature:
+      value: 293.15
+      unit: K
 system:
   type: electrochemical
   electrolyte:
@@ -26,9 +30,6 @@ system:
           supplier: Airgas
         purity:
           grade: 5N5
-    temperature:
-      value: 293.15
-      unit: K
   electrodes:
     - name: WE
       function: working electrode
@@ -72,12 +73,13 @@ dataDescription:
       unit: uA cm-2
 curation:
   process:
-  - role: experimentalist
-    name: Dusan Strmcnik
-    orcid: https://orcid.org/0000-0002-3021-2771
-    date: 2009-01-01
-  - role: curator
-    name: Miha Hotko
-    orcid: https://orcid.org/0009-0002-2217-7782
-    date: 2026-07-01
+    - role: experimentalist
+      name: Dusan Strmcnik
+      orcid: https://orcid.org/0000-0002-3021-2771
+      date: 2009-01-01
+    - role: curator
+      name: Miha Hotko
+      orcid: https://orcid.org/0009-0002-2217-7782
+      date: 2026-07-01
 
+echemdbSchemaVersion: 0.8.2

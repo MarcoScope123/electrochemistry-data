@@ -2,10 +2,14 @@
 # Details on the meta data structure can be found on https://github.com/echemdb/metadata-schema
 experimental:
   tags:
-  - BCV
+    - BCV
   instrumentation:
-  - name: Biologic
-    type: potentiostat
+    - name: Biologic
+      type: potentiostat
+  operationParameters:
+    temperature:
+      unit: K
+      value: 298.15
 system:
   type: electrochemical
   electrodes:
@@ -42,32 +46,29 @@ system:
         manufacturer: Mateck
   electrolyte:
     components:
-    - name: water
-      proportion:
-        unit: volume percent
-        value: 100
-      source:
-        quality: ultrapure water
-        refinement: Millipore Milli-Q
-      type: solvent
-      chemicalIdentifiers:
-        cas: 7732-18-5
-        smiles: O
-    - concentration:
-        unit: mol / l
-        value: 0.1
-      name: KOH
-      source:
-        supplier: Merck Suprapur
-      type: base
-      chemicalIdentifiers:
-        cas: 1310-58-3
-        smiles: '[K+].[OH-]'
+      - name: water
+        proportion:
+          unit: volume percent
+          value: 100
+        source:
+          quality: ultrapure water
+          refinement: Millipore Milli-Q
+        type: solvent
+        chemicalIdentifiers:
+          cas: 7732-18-5
+          smiles: O
+      - concentration:
+          unit: mol / l
+          value: 0.1
+        name: KOH
+        source:
+          supplier: Merck Suprapur
+        type: base
+        chemicalIdentifiers:
+          cas: 1310-58-3
+          smiles: '[K+].[OH-]'
     ph:
       value: 13
-    temperature:
-      unit: K
-      value: 298.15
     type: aqueous
   electrochemicalCell:
     type: flow cell attached to UHV system
@@ -80,8 +81,8 @@ source:
   figure: 4b
   curve: '2'
   techniques:
-  - XPS
-  - STM
+    - XPS
+    - STM
 figureDescription:
   type: raw
   measurementType: CV
@@ -107,11 +108,12 @@ dataDescription:
       unit: uA cm-2
 curation:
   process:
-  - role: experimentalist
-    name: Albert Engstfeld
-    orcid: https://orcid.org/0000-0002-9686-3948
-    date: 2021-07-09
-  - role: reviewer
-    name: Albert Engstfeld
-    orcid: https://orcid.org/0000-0002-9686-3948
-    date: 2022-01-21
+    - role: experimentalist
+      name: Albert Engstfeld
+      orcid: https://orcid.org/0000-0002-9686-3948
+      date: 2021-07-09
+    - role: reviewer
+      name: Albert Engstfeld
+      orcid: https://orcid.org/0000-0002-9686-3948
+      date: 2022-01-21
+echemdbSchemaVersion: 0.8.2

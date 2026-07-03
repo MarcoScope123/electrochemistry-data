@@ -6,7 +6,7 @@ system:
     - name: CE
       function: counter electrode
       material: Pt
-      shape: 
+      shape:
         type: wire
     - name: REF
       function: reference electrode
@@ -25,35 +25,38 @@ system:
           - Annealed in an H2 flame for 30 s.
   electrolyte:
     components:
-    - concentration:
-        unit: mol / l
-        value: 0.05
-      name: KClO4
-      type: salt
-      chemicalIdentifiers:
-        cas: 7778-74-7
-        smiles: '[K+].[ClO4-]'
-    - name: water
-      type: solvent
-      chemicalIdentifiers:
-        cas: 7732-18-5
-        smiles: O
-    temperature:
-      unit: K
-      value: 293
+      - concentration:
+          unit: mol / l
+          value: 0.05
+        name: KClO4
+        type: salt
+        chemicalIdentifiers:
+          cas: 7778-74-7
+          smiles: '[K+].[ClO4-]'
+      - name: water
+        type: solvent
+        chemicalIdentifiers:
+          cas: 7732-18-5
+          smiles: O
     type: aqueous
 source:
   citationKey: abou_2003_electrosorption_211
   techniques:
-  - Monte-Carlo simulations
+    - Monte-Carlo simulations
   url: https://doi.org/10.1016/S0022-0728(03)00178-5
 curation:
   process:
-  - role: curator
-    name: Markus Schilling
-    orcid: https://orcid.org/0000-0003-2684-3711
-    date: 2021-10-18
-  - role: reviewer
-    name: Albert Engstfeld
-    orcid: https://orcid.org/0000-0002-9686-3948
-    date: 2022-01-21
+    - role: curator
+      name: Markus Schilling
+      orcid: https://orcid.org/0000-0003-2684-3711
+      date: 2021-10-18
+    - role: reviewer
+      name: Albert Engstfeld
+      orcid: https://orcid.org/0000-0002-9686-3948
+      date: 2022-01-21
+experimental:
+  operationParameters:
+    temperature:
+      unit: K
+      value: 293
+echemdbSchemaVersion: 0.8.2
