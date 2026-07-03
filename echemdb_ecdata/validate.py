@@ -79,12 +79,16 @@ logger = logging.getLogger("echemdb_ecdata")
 #: (e.g. ``0.8.0``) or a branch name (e.g. ``main``).
 #: Change this single value to update the version across all validation tasks.
 #: Keep the ``mdstools`` git tag in ``pyproject.toml`` in sync with this value.
-SCHEMA_VERSION = "0.8.1"
+SCHEMA_VERSION = "0.8.2"
 
 
 def _load_metadata_file(path):
     r"""
     Load a metadata file (YAML or JSON) into a dict.
+
+    YAML is loaded with ``mdstools.schema.validator.load_yaml_metadata``, so
+    unquoted dates (e.g. ``date: 2021-07-09``) stay plain strings as required
+    for validation of string-typed schema fields.
 
     EXAMPLES::
 
@@ -100,7 +104,13 @@ def _load_metadata_file(path):
     with open(path, encoding="utf-8") as f:
         if path.suffix == ".json":
             return json.load(f)
-        return yaml.safe_load(f)
+        # Imported lazily: mdstools requires Python >= 3.11 and is only
+        # installed in the dev environment (see pyproject.toml).
+        from mdstools.schema.validator import (  # pylint: disable=import-outside-toplevel
+            load_yaml_metadata,
+        )
+
+        return load_yaml_metadata(f)
 
 
 def _validation_messages(validator, data):
