@@ -30,9 +30,6 @@ system:
     ph:
       value: 1.041
       comment: Estimated with CurTiPot on extraction from publication using a temperature of 25°C.
-    temperature:
-      value: 25
-      unit: deg_C
     comment: The electrolyte was at room temperature.
   electrodes:
     - name: REF
@@ -67,8 +64,14 @@ source:
   url: https://doi.org/10.1021/jp036483l
 curation:
   process:
-  - role: curator
-    name: Johannes M. Hermann
-    orcid: https://orcid.org/0000-0001-7119-1295
-    date: 2026-02-04
+    - role: curator
+      name: Johannes M. Hermann
+      orcid: https://orcid.org/0000-0001-7119-1295
+      date: 2026-02-04
 
+experimental:
+  operationParameters:
+    temperature:
+      value: 25
+      unit: deg_C
+echemdbSchemaVersion: 0.8.2

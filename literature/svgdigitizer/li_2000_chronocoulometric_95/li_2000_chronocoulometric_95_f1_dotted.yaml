@@ -17,8 +17,8 @@ system:
       crystallographicOrientation: '111'
       material: Pt
       geometricElectrolyteContactArea:
-          unit: cm2
-          value: 0.043
+        unit: cm2
+        value: 0.043
       preparationProcedure:
         description:
           - A Pt single crystal bead was cut along the (111) orientation.
@@ -27,51 +27,54 @@ system:
           - Quenched with ultrapure water.
   electrolyte:
     components:
-    - concentration:
-        unit: mmol / l
-        value: 1
-      name: HClO4
-      type: acid
-      chemicalIdentifiers:
-        cas: 7601-90-3
-        smiles: Cl(=O)(=O)(=O)O
-    - name: water
-      type: solvent
-      chemicalIdentifiers:
-        cas: 7732-18-5
-        smiles: O
-    - concentration:
-        unit: mol / l
-        value: 0.1
-      name: KClO4
-      type: salt
-      chemicalIdentifiers:
-        cas: 7778-74-7
-        smiles: '[K+].[ClO4-]'
-    - concentration:
-        unit: mmol / l
-        value: 1
-      name: KCl
-      type: salt
-      chemicalIdentifiers:
-        cas: 7447-40-7
-        smiles: '[K+].[Cl-]'
+      - concentration:
+          unit: mmol / l
+          value: 1
+        name: HClO4
+        type: acid
+        chemicalIdentifiers:
+          cas: 7601-90-3
+          smiles: Cl(=O)(=O)(=O)O
+      - name: water
+        type: solvent
+        chemicalIdentifiers:
+          cas: 7732-18-5
+          smiles: O
+      - concentration:
+          unit: mol / l
+          value: 0.1
+        name: KClO4
+        type: salt
+        chemicalIdentifiers:
+          cas: 7778-74-7
+          smiles: '[K+].[ClO4-]'
+      - concentration:
+          unit: mmol / l
+          value: 1
+        name: KCl
+        type: salt
+        chemicalIdentifiers:
+          cas: 7447-40-7
+          smiles: '[K+].[Cl-]'
     ph:
       value: 3
-    temperature:
-      unit: K
-      value: 298.15
     type: aqueous
 source:
   citationKey: li_2000_chronocoulometric_95
   url: https://doi.org/10.1016/S0022-0728(00)00199-6
 curation:
   process:
-  - role: curator
-    name: Markus Schilling
-    orcid: https://orcid.org/0000-0003-2684-3711
-    date: 2021-11-17
-  - role: reviewer
-    name: Albert Engstfeld
-    orcid: https://orcid.org/0000-0002-9686-3948
-    date: 2022-01-21
+    - role: curator
+      name: Markus Schilling
+      orcid: https://orcid.org/0000-0003-2684-3711
+      date: 2021-11-17
+    - role: reviewer
+      name: Albert Engstfeld
+      orcid: https://orcid.org/0000-0002-9686-3948
+      date: 2022-01-21
+experimental:
+  operationParameters:
+    temperature:
+      unit: K
+      value: 298.15
+echemdbSchemaVersion: 0.8.2

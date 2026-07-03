@@ -180,8 +180,8 @@ pixi run -e dev validate-bib-utf8  # Check for LaTeX accent encodings
 Validate against a specific schema version:
 
 ```sh
-pixi run -e dev validate-input --version tags/0.3.3
-pixi run -e dev validate-generated --version head/my-branch
+pixi run -e dev validate-input --version 0.8.0
+pixi run -e dev validate-generated --version main
 ```
 
 ### Fix Utilities
@@ -201,6 +201,11 @@ pixi run -e dev fix-identifiers-dry-run  # Preview only
 
 # Rename directories and files after a bib key change (manual)
 pixi run -e dev rename-identifiers OLD_NAME NEW_NAME
+
+# Migrate input YAML metadata across breaking metadata-schema releases
+# (applies the migration steps shipped with the metadata-schema repository)
+pixi run -e dev migrate-metadata          # Apply changes
+pixi run -e dev migrate-metadata-dry-run  # Preview only
 ```
 
 ## Reviewing Submissions (Curators)

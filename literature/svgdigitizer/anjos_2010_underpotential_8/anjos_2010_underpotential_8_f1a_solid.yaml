@@ -8,7 +8,7 @@ source:
   url: https://doi.org/10.1016/j.jelechem.2009.10.003
   citationKey: anjos_2010_underpotential_8
   techniques:
-  - CV
+    - CV
 system:
   type: electrochemical
   electrolyte:
@@ -29,9 +29,6 @@ system:
           supplier: Merck
         purity:
           grade: 95-98.0%
-    temperature:
-      value: 293
-      unit: K
   electrodes:
     - name: WE
       function: working electrode
@@ -45,3 +42,9 @@ system:
           - flame annealed in a hydrogen/oxygen flame.
           - cooled in argon-hydrogen atmosphere.
           - details see https://doi.org/10.1016/S0022-0728(79)80022-4
+experimental:
+  operationParameters:
+    temperature:
+      value: 293
+      unit: K
+echemdbSchemaVersion: 0.8.2
