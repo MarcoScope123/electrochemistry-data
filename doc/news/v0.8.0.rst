@@ -12,7 +12,7 @@
 
 **Changed:**
 
-* Changed the metadata-schema version to 0.8.0 and migrated all input YAML
+* Changed the metadata-schema version to 0.8.1 and migrated all input YAML
   files accordingly: ``system.electrolyte.temperature`` moved to
   ``experimental.operationParameters.temperature``.
 * Changed schema validation to use the validation tools of the
