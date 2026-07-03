@@ -51,9 +51,9 @@ Validate only newly added entries compared to a base branch::
 # ********************************************************************
 
 import glob
+import json
 import logging
 import os
-import re
 import subprocess
 from pathlib import Path
 
@@ -73,21 +73,80 @@ from echemdb_ecdata.bibliography import (
 
 logger = logging.getLogger("echemdb_ecdata")
 
-_SCHEMA_BASE = "https://raw.githubusercontent.com/echemdb/metadata-schema/refs"
-
-#: Default metadata-schema version used for validation.
+#: Default metadata-schema version used for validation and embedded in
+#: generated data packages: a release tag of the
+#: `metadata-schema repository <https://github.com/echemdb/metadata-schema>`_
+#: (e.g. ``0.8.0``) or a branch name (e.g. ``main``).
 #: Change this single value to update the version across all validation tasks.
-SCHEMA_VERSION = "tags/0.8.0"
-#: Clean version string for embedding in generated data packages.
-ECHEMDB_SCHEMA_VERSION = SCHEMA_VERSION.removeprefix("tags/")
+#: Keep the ``mdstools`` git tag in ``pyproject.toml`` in sync with this value.
+SCHEMA_VERSION = "0.8.0"
+
+
+def _load_metadata_file(path):
+    r"""
+    Load a metadata file (YAML or JSON) into a dict.
+
+    EXAMPLES::
+
+        >>> import tempfile, os
+        >>> with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+        ...     _ = f.write('{"key": "value"}')
+        ...     name = f.name
+        >>> _load_metadata_file(Path(name))
+        {'key': 'value'}
+        >>> os.unlink(name)
+
+    """
+    with open(path, encoding="utf-8") as f:
+        if path.suffix == ".json":
+            return json.load(f)
+        return yaml.safe_load(f)
+
+
+def _validation_messages(validator, data):
+    r"""
+    Return schema and instrument-reference error messages for ``data``.
+
+    ``validator`` is a prepared ``jsonschema`` validator. In addition to its
+    errors, this reports dangling instrument references in
+    ``experimental.operationParameters`` control blocks, a cross-reference
+    check provided by the metadata-schema tooling (``mdstools``) that JSON
+    Schema itself cannot express.
+
+    EXAMPLES::
+
+        >>> import jsonschema  # doctest: +SKIP
+        >>> _validation_messages(
+        ...     jsonschema.Draft202012Validator({"type": "object"}), {})  # doctest: +SKIP
+        []
+
+    """
+    # Imported lazily: mdstools requires Python >= 3.11 and is only installed
+    # in the dev environment (see pyproject.toml).
+    from mdstools.schema.validator import (  # pylint: disable=import-outside-toplevel
+        validate_instrument_references,
+    )
+
+    messages = []
+    for error in sorted(validator.iter_errors(data), key=lambda err: err.path):
+        path = "/".join(str(part) for part in error.absolute_path) or "<root>"
+        messages.append(f"{error.message} (at {path})")
+    messages.extend(validate_instrument_references(data))
+    return messages
 
 
 def validate_schema(data_dir, schema_name, version=None, verbose=True):
     r"""
-    Validate JSON or YAML files against a metadata schema using check-jsonschema.
+    Validate JSON or YAML files against a metadata schema.
 
-    This is a cross-platform replacement for the ``find | xargs check-jsonschema``
-    pipeline that fails on Windows (where ``find.exe`` is a different tool).
+    Uses the validation tools shipped with the
+    `metadata-schema repository <https://github.com/echemdb/metadata-schema>`_
+    (``mdstools``). The JSON Schema for ``schema_name`` is fetched once for
+    ``version`` and all files are validated in-process. Besides plain JSON
+    Schema validation this also runs the instrument-reference check
+    (``operationParameters`` control blocks must reference an instrument
+    declared in ``experimental.instrumentation``), which JSON Schema itself
+    cannot express.
 
     Parameters
     ----------
@@ -96,20 +155,21 @@ def validate_schema(data_dir, schema_name, version=None, verbose=True):
         For ``echemdb_package`` schema, searches for ``*.json`` files.
         For other schemas, searches for ``*.yaml`` files.
     schema_name : str
-        Name of the schema file (without ``.json`` extension), e.g.,
+        Name of the schema (without ``.json`` extension), e.g.,
         ``echemdb_package``, ``svgdigitizer``, or ``source_data``.
     version : str or None
-        Schema version reference, e.g., ``tags/0.5.1`` or ``head/main``.
-        Defaults to :data:`SCHEMA_VERSION` when ``None``.
+        Schema version: a metadata-schema release tag (e.g. ``0.8.0``) or a
+        branch name (e.g. ``main``). Defaults to :data:`SCHEMA_VERSION` when
+        ``None``.
     verbose : bool
-        If ``True``, passes ``--verbose`` to ``check-jsonschema``.
+        If ``True``, prints each file as it validates.
 
     Raises
     ------
     FileNotFoundError
         If no matching files are found in ``data_dir``.
-    subprocess.CalledProcessError
-        If schema validation fails.
+    ValueError
+        If schema validation fails for any file.
 
     EXAMPLES::
 
@@ -129,76 +189,43 @@ def validate_schema(data_dir, schema_name, version=None, verbose=True):
             f"No {ext} files found in {data_dir}. " f"Has the data been generated?"
         )
 
-    schema_url = f"{_SCHEMA_BASE}/{version}/schemas/{schema_name}.json"
+    # Imported lazily: mdstools requires Python >= 3.11 and is only installed
+    # in the dev environment (see pyproject.toml).
+    # pylint: disable=import-outside-toplevel
+    import jsonschema
+    from mdstools.schema import validator as mds_validator
 
-    cmd = [
-        "check-jsonschema",
-        "--schemafile",
-        schema_url,
-        "--base-uri",
-        schema_url,
-        "--no-cache",
-    ]
-    if verbose:
-        cmd.append("--verbose")
-
-    file_args = [str(f) for f in files]
+    # pylint: enable=import-outside-toplevel
+    # Fetch the schema (and, for package schemas, the Frictionless schemas it
+    # references) once, then validate all files in-process. mdstools' public
+    # ``validate()`` refetches the schema for every document, which is too slow
+    # for hundreds of files.
+    # pylint: disable=protected-access
+    schema = mds_validator._fetch_remote_schema(schema_name, version=version)
+    registry = mds_validator._build_remote_registry(schema_name)
+    # pylint: enable=protected-access
+    validator = jsonschema.validators.validator_for(schema)(schema, registry=registry)
 
     print(
         f"Validating {len(files)} {ext} file(s) in {data_dir} "
         f"against {schema_name} ({version})..."
     )
 
-    # Pass the files in batches so the command line stays within the Windows
-    # CreateProcess limit (32767 chars); a single invocation with all paths
-    # raises ``[WinError 206] The filename or extension is too long``. Each batch
-    # still reports the offending file via check-jsonschema's own output.
-    batches = _chunk_args_by_length(cmd, file_args)
-    failed = False
-    for i, batch in enumerate(batches, start=1):
-        if len(batches) > 1:
-            print(f"  batch {i}/{len(batches)} ({len(batch)} files)...")
-        result = subprocess.run(cmd + batch, check=False)
-        if result.returncode != 0:
-            failed = True
-    if failed:
-        raise subprocess.CalledProcessError(1, cmd)
+    failed_files = 0
+    for file in files:
+        messages = _validation_messages(validator, _load_metadata_file(file))
+        if messages:
+            failed_files += 1
+            print(f"FAILED: {file}")
+            print("\n".join(f"  - {message}" for message in messages))
+        elif verbose:
+            print(f"ok: {file}")
 
-
-def _chunk_args_by_length(base_cmd, args, max_len=28000):
-    r"""
-    Split ``args`` into batches so that each ``base_cmd + batch`` command line
-    stays within ``max_len`` characters.
-
-    This keeps subprocess invocations under the Windows ``CreateProcess`` command
-    line limit (32767 characters). ``max_len`` leaves headroom for the resolved
-    executable path and per-argument quoting/separators. Each batch holds at
-    least one argument, even if that single argument exceeds ``max_len``.
-
-    EXAMPLES::
-
-        >>> _chunk_args_by_length(["cmd"], ["aaaa", "bbbb", "cccc"], max_len=20)
-        [['aaaa', 'bbbb'], ['cccc']]
-
-        >>> _chunk_args_by_length(["cmd"], ["a", "b", "c"])
-        [['a', 'b', 'c']]
-
-    """
-    base_len = sum(len(c) + 3 for c in base_cmd)
-    batches = []
-    current = []
-    current_len = base_len
-    for arg in args:
-        arg_len = len(arg) + 3
-        if current and current_len + arg_len > max_len:
-            batches.append(current)
-            current = []
-            current_len = base_len
-        current.append(arg)
-        current_len += arg_len
-    if current:
-        batches.append(current)
-    return batches
+    if failed_files:
+        raise ValueError(
+            f"Schema validation failed for {failed_files} of "
+            f"{len(files)} file(s). See output above for details."
+        )
 
 
 def _build_expected_identifier(citation_key, figure, curve):
@@ -749,319 +776,3 @@ def validate_new_input(base_ref="origin/main"):
             f"Validation failed with {len(ref_errors)} citation-key "
             f"reference error(s). See output above for details."
         )
-
-
-def _lowercase_svg_labels(svg_path):
-    r"""
-    Lowercase the figure and curve text labels inside an SVG file.
-
-    Modifies the SVG in place. Only changes ``<text>`` elements
-    matching ``figure: ...`` or ``curve: ...`` patterns.
-
-    EXAMPLES::
-
-        >>> import tempfile, os
-        >>> svg = '<svg><text>figure: 1Cs</text><text>curve: Au_solid</text></svg>'
-        >>> kw = dict(mode='w', suffix='.svg',
-        ...     delete=False, encoding='utf-8')
-        >>> with tempfile.NamedTemporaryFile(**kw) as f:
-        ...     _ = f.write(svg)
-        ...     name = f.name
-        >>> _lowercase_svg_labels(name)
-        True
-        >>> with open(name, encoding='utf-8') as f:
-        ...     print(f.read())
-        <svg><text>figure: 1cs</text><text>curve: au_solid</text></svg>
-        >>> os.unlink(name)
-
-    Returns ``False`` if nothing changed::
-
-        >>> import tempfile, os
-        >>> svg = '<svg><text>figure: 1a</text><text>curve: solid</text></svg>'
-        >>> with tempfile.NamedTemporaryFile(**kw) as f:
-        ...     _ = f.write(svg)
-        ...     name = f.name
-        >>> _lowercase_svg_labels(name)
-        False
-        >>> os.unlink(name)
-
-    """
-    with open(svg_path, encoding="utf-8") as f:
-        content = f.read()
-
-    def _lower_label(match):
-        return match.group(1) + match.group(2).lower()
-
-    new_content = re.sub(r"((?:figure|curve):\s*)([^<]+)", _lower_label, content)
-
-    if new_content != content:
-        with open(svg_path, "w", encoding="utf-8") as f:
-            f.write(new_content)
-        return True
-    return False
-
-
-def _git_mv_lowercase(file_path):
-    r"""
-    Rename a file to its lowercase version using ``git mv``.
-
-    On Windows, case-only renames require a two-step process
-    (file → temp → lowercase) because the filesystem is
-    case-insensitive.
-
-    Returns ``True`` if the file was renamed, ``False`` if already
-    lowercase.
-    """
-    path = Path(file_path)
-    lower_name = path.name.lower()
-
-    if path.name == lower_name:
-        return False
-
-    # Two-step rename for Windows case-insensitive filesystem
-    tmp_path = path.with_name(path.name + "_tmp_rename")
-    target_path = path.with_name(lower_name)
-
-    subprocess.run(
-        ["git", "mv", str(path), str(tmp_path)],
-        check=True,
-        capture_output=True,
-    )
-    subprocess.run(
-        ["git", "mv", str(tmp_path), str(target_path)],
-        check=True,
-        capture_output=True,
-    )
-    return True
-
-
-def lowercase_svgdigitizer_files(  # pylint: disable=too-many-locals,too-many-branches
-    data_dir="literature/svgdigitizer",
-    dry_run=False,
-):
-    r"""
-    Fix uppercase in svgdigitizer SVG labels and filenames.
-
-    This function:
-
-    1. Lowercases ``figure:`` and ``curve:`` text labels inside SVG files.
-    2. Renames files (both ``.svg`` and ``.yaml``) to lowercase using
-       ``git mv`` (two-step for Windows compatibility).
-
-    Use ``dry_run=True`` to preview changes without modifying anything.
-
-    EXAMPLES::
-
-        >>> lowercase_svgdigitizer_files(dry_run=True)  # doctest: +SKIP
-
-    """
-    yaml_files = sorted(glob.glob(os.path.join(data_dir, "**/*.yaml"), recursive=True))
-    changes = []
-
-    for yaml_file in yaml_files:
-        yaml_path = Path(yaml_file)
-        svg_path = yaml_path.with_suffix(".svg")
-
-        if not svg_path.exists():
-            continue
-
-        stem = yaml_path.stem
-        lower_stem = stem.lower()
-        needs_rename = stem != lower_stem
-
-        # Check SVG labels
-        with open(svg_path, encoding="utf-8") as f:
-            content = f.read()
-        svg_has_upper = bool(re.search(r"(?:figure|curve):\s*[^<]*[A-Z]", content))
-
-        if not needs_rename and not svg_has_upper:
-            continue
-
-        if svg_has_upper:
-            changes.append(f"SVG LABELS: {svg_path}")
-        if needs_rename:
-            changes.append(f"RENAME: {stem}.yaml -> {lower_stem}.yaml")
-            changes.append(f"RENAME: {stem}.svg -> {lower_stem}.svg")
-
-        if dry_run:
-            continue
-
-        # Fix SVG labels first (before rename)
-        if svg_has_upper:
-            _lowercase_svg_labels(svg_path)
-            print(f"Fixed SVG labels: {svg_path}")
-
-        # Rename files
-        if needs_rename:
-            for ext in [".yaml", ".svg"]:
-                filepath = yaml_path.with_suffix(ext)
-                if filepath.exists():
-                    renamed = _git_mv_lowercase(filepath)
-                    if renamed:
-                        print(f"Renamed: {filepath.name} -> {filepath.name.lower()}")
-
-    if dry_run:
-        if changes:
-            print(f"Dry run: {len(changes)} changes needed:")
-            for c in changes:
-                print(f"  {c}")
-        else:
-            print("Dry run: no changes needed.")
-
-    return changes
-
-
-def _rename_directory(old_dir, new_dir, old_name, new_name, dry_run=False):
-    r"""
-    Rename a directory and all files whose names contain ``old_name``.
-
-    Tracked files are renamed with ``git mv`` (two-step for Windows
-    case-insensitive filesystem).  Untracked files are renamed with
-    plain ``os.rename``.
-
-    Returns a list of human-readable change descriptions.
-    """
-    changes = []
-    old_path = Path(old_dir)
-    new_path = Path(new_dir)
-
-    if not old_path.exists():
-        return changes
-
-    # Rename files inside the directory first
-    for filepath in sorted(old_path.iterdir()):
-        old_basename = filepath.name
-        new_basename = old_basename.replace(old_name, new_name)
-        if old_basename == new_basename:
-            continue
-
-        changes.append(f"  FILE: {old_basename} -> {new_basename}")
-        if dry_run:
-            continue
-
-        # Check if file is tracked by git
-        result = subprocess.run(
-            ["git", "ls-files", "--error-unmatch", str(filepath)],
-            capture_output=True,
-            check=False,
-        )
-        if result.returncode == 0:
-            # Two-step rename for Windows case-insensitive filesystem
-            tmp = filepath.with_name(old_basename + ".tmp_rename")
-            subprocess.run(
-                ["git", "mv", str(filepath), str(tmp)],
-                check=True,
-                capture_output=True,
-            )
-            subprocess.run(
-                ["git", "mv", str(tmp), str(old_path / new_basename)],
-                check=True,
-                capture_output=True,
-            )
-        else:
-            os.rename(filepath, old_path / new_basename)
-
-    # Rename the directory itself
-    changes.append(f"  DIR:  {old_path.name}/ -> {new_path.name}/")
-    if not dry_run:
-        # Check if directory has tracked files
-        result = subprocess.run(
-            ["git", "ls-files", str(old_path)],
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        if result.stdout.strip():
-            tmp_dir = old_path.with_name(old_path.name + ".tmp_rename")
-            subprocess.run(
-                ["git", "mv", str(old_path), str(tmp_dir)],
-                check=True,
-                capture_output=True,
-            )
-            subprocess.run(
-                ["git", "mv", str(tmp_dir), str(new_path)],
-                check=True,
-                capture_output=True,
-            )
-        else:
-            os.rename(old_path, new_path)
-
-    return changes
-
-
-def fix_identifiers(  # pylint: disable=too-many-locals,too-many-branches
-    data_dir="literature/svgdigitizer",
-    generated_dir="data/generated/svgdigitizer",
-    dry_run=False,
-):
-    r"""
-    Automatically detect and fix directory/file name mismatches.
-
-    Scans all YAML files in ``data_dir``, reads each ``citationKey``,
-    and compares it to the parent directory name.  When they differ,
-    renames the directory and all contained files (in both the input
-    and generated trees) to match the ``citationKey``.
-
-    Uses ``git mv`` with a two-step rename for Windows compatibility.
-    Untracked files (e.g. PDFs) are renamed with plain ``os.rename``.
-
-    Use ``dry_run=True`` to preview changes without modifying anything.
-
-    EXAMPLES::
-
-        >>> fix_identifiers(dry_run=True)  # doctest: +SKIP
-
-    """
-    yaml_files = sorted(glob.glob(os.path.join(data_dir, "**/*.yaml"), recursive=True))
-
-    if not yaml_files:
-        raise FileNotFoundError(f"No YAML files found in {data_dir}")
-
-    # Collect unique directory-level mismatches (one per directory)
-    mismatches = {}  # old_dir_name -> new_dir_name (citationKey)
-    for yaml_file in yaml_files:
-        yaml_path = Path(yaml_file)
-        citation_key = (
-            _read_yaml_metadata(yaml_path).get("source", {}).get("citationKey", "")
-        )
-        if not citation_key:
-            continue
-        dir_name = yaml_path.parent.name
-        if dir_name != citation_key and dir_name not in mismatches:
-            mismatches[dir_name] = citation_key
-
-    if not mismatches:
-        print("No identifier mismatches found. Everything is up to date.")
-        return []
-
-    all_changes = []
-    for old_name, new_name in sorted(mismatches.items()):
-        print(f"{'[DRY RUN] ' if dry_run else ''}RENAME: {old_name} -> {new_name}")
-
-        # Rename in literature/svgdigitizer/
-        old_dir = os.path.join(data_dir, old_name)
-        new_dir = os.path.join(data_dir, new_name)
-        changes = _rename_directory(old_dir, new_dir, old_name, new_name, dry_run)
-        for c in changes:
-            print(c)
-        all_changes.extend(changes)
-
-        # Rename in data/generated/svgdigitizer/
-        old_gen = os.path.join(generated_dir, old_name)
-        new_gen = os.path.join(generated_dir, new_name)
-        if Path(old_gen).exists():
-            changes = _rename_directory(
-                old_gen,
-                new_gen,
-                old_name,
-                new_name,
-                dry_run,
-            )
-            for c in changes:
-                print(c)
-            all_changes.extend(changes)
-
-    action = "would rename" if dry_run else "renamed"
-    n = len(mismatches)
-    print(f"\n{n} director{'y' if n == 1 else 'ies'} {action}.")
-    return all_changes
