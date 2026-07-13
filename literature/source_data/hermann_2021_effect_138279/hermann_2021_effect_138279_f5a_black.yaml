@@ -53,9 +53,6 @@ system:
     ph:
       comment: "Estimated with CurTiPot (v4.4.0) using a temperature of 25 °C."
       value: 1.106
-    temperature:
-      unit: deg_C
-      value: 20
   electrodes:
     - name: RE
       function: reference electrode
@@ -99,6 +96,10 @@ source:
 experimental:
   tags:
     - FAOR
+  operationParameters:
+    temperature:
+      unit: deg_C
+      value: 20
 figureDescription:
   type: raw
   measurementType: CV
@@ -125,3 +126,4 @@ dataDescription:
       reference: MSE-sat
     - name: I
       unit: A
+echemdbSchemaVersion: 0.8.2

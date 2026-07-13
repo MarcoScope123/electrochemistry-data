@@ -64,7 +64,6 @@ python = "3.13.*"
 python = "3.14.*"
 
 [tool.pixi.feature.test.dependencies]
-check-jsonschema = ">=0.36.2,<0.37"
 pytest = ">=9.0.2,<10"
 pytest-xdist = ">=3.8.0,<4"
 pytest-doctestplus = ">=1.7.1,<2"
@@ -93,11 +92,11 @@ verify-all = 'python -c "from echemdb_ecdata.digitize import verify_batch_conver
 # Two umbrella tasks run all relevant checks:
 #   validate-input     - YAML schema, filenames/identifiers, and bib keys (for input files in literature/)
 #   validate-generated - JSON schema and identifiers (for generated files in data/generated/)
-# To validate against a specific metadata-schema version use e.g. `--version tags/0.3.3` or `--version head/branch-name`.
+# To validate against a specific metadata-schema version use e.g. `--version 0.8.0` (a release tag) or `--version main` (a branch name).
 #
 # Schema validation of generated JSON datapackages
 # Default schema version is defined in echemdb_ecdata.validate.SCHEMA_VERSION.
-# Override per call: pixi run validate-svgdigitizer --version tags/0.3.3
+# Override per call: pixi run validate-svgdigitizer --version 0.8.0
 validate-svgdigitizer = { args = [ { "arg" = "version", "default" = "" } ], cmd = "python -c \"from echemdb_ecdata.validate import validate_schema; validate_schema('data/generated/svgdigitizer', 'echemdb_package', '{{ version }}' or None)\"" }
 validate-raw = { args = [ { "arg" = "version", "default" = "" } ], cmd = "python -c \"from echemdb_ecdata.validate import validate_schema; validate_schema('data/generated/source_data', 'echemdb_package', '{{ version }}' or None)\"" }
 # Schema validation of input YAML files
@@ -115,18 +114,23 @@ validate-input = { depends-on = ["validate-svgdigitizer-yaml", "validate-source-
 validate-new-input = { args = [ { "arg" = "base_ref", "default" = "origin/main" } ], cmd = "python -c \"from echemdb_ecdata.validate import validate_new_input; validate_new_input('{{ base_ref }}')\"" }
 validate-generated = { depends-on = ["validate-svgdigitizer", "validate-raw", "validate-generated-identifiers"] }
 # Fix utilities
-fix-lowercase = 'python -c "from echemdb_ecdata.validate import lowercase_svgdigitizer_files; lowercase_svgdigitizer_files()"'
-fix-lowercase-dry-run = 'python -c "from echemdb_ecdata.validate import lowercase_svgdigitizer_files; lowercase_svgdigitizer_files(dry_run=True)"'
+fix-lowercase = 'python -c "from echemdb_ecdata.fix import lowercase_svgdigitizer_files; lowercase_svgdigitizer_files()"'
+fix-lowercase-dry-run = 'python -c "from echemdb_ecdata.fix import lowercase_svgdigitizer_files; lowercase_svgdigitizer_files(dry_run=True)"'
 fix-bib-utf8 = 'python -c "from echemdb_ecdata.bibliography import fix_bib_utf8; fix_bib_utf8()"'
 fix-bib-utf8-dry-run = 'python -c "from echemdb_ecdata.bibliography import fix_bib_utf8; fix_bib_utf8(dry_run=True)"'
 fix-bib-format = 'python -c "from echemdb_ecdata.bibliography import normalize_bib; normalize_bib()"'
 fix-bib-format-dry-run = 'python -c "from echemdb_ecdata.bibliography import normalize_bib; normalize_bib(dry_run=True)"'
 # Auto-fix identifier mismatches (detects dir name != YAML citationKey and renames)
-fix-identifiers = 'python -c "from echemdb_ecdata.validate import fix_identifiers; fix_identifiers()"'
-fix-identifiers-dry-run = 'python -c "from echemdb_ecdata.validate import fix_identifiers; fix_identifiers(dry_run=True)"'
+fix-identifiers = 'python -c "from echemdb_ecdata.fix import fix_identifiers; fix_identifiers()"'
+fix-identifiers-dry-run = 'python -c "from echemdb_ecdata.fix import fix_identifiers; fix_identifiers(dry_run=True)"'
 # Rename identifiers (directories and files) after a bib key change
 # Usage: bash util/rename_identifiers.sh OLD_NAME NEW_NAME
 rename-identifiers = "bash util/rename_identifiers.sh"
+# Migrate literature metadata YAML files across breaking metadata-schema
+# releases using the migration engine from the metadata-schema repository
+# (mdstools). Requires the dev environment: pixi run -e dev migrate-metadata
+migrate-metadata = 'python -c "from echemdb_ecdata.migrate import migrate_metadata; migrate_metadata()"'
+migrate-metadata-dry-run = 'python -c "from echemdb_ecdata.migrate import migrate_metadata; migrate_metadata(dry_run=True)"'
 # Tests
 doctest = "pytest -n auto --doctest-modules echemdb_ecdata"
 # pytest executes doctests of the cli
@@ -159,7 +163,17 @@ sphinx_rtd_theme = ">=3.1.0,<4"
 [tool.pixi.feature.doc.tasks]
 doc = "cd doc && make html SPHINXOPTS='-W -n --keep-going'"
 
+[tool.pixi.feature.dev.pypi-dependencies]
+# Validation and migration tooling from the metadata-schema repository
+# (not published on PyPI; pinned to the release tag matching SCHEMA_VERSION
+# in echemdb_ecdata/validate.py). Lives in the dev feature (not test) because
+# mdstools requires Python >=3.11 and the python-310 environment must still solve.
+mdstools = { git = "https://github.com/echemdb/metadata-schema.git", tag = "0.8.2" }
+
 [tool.pixi.feature.dev.dependencies]
+# mdstools depends on linkml, which requires click<8.2; without this pin the
+# conda solve picks a newer click and the pypi solve of mdstools fails.
+click = ">=8.1,<8.2"
 make = ">=4.4.1,<5"
 pip = ">=26.0.1,<27"
 conda = ">=26.1.0,<27"

@@ -8,10 +8,10 @@ source:
   url: http://dx.doi.org/10.2298/JSC0207531J
   citationKey: jovic_2002_surface_531
   techniques:
-  - CV
+    - CV
 experimental:
-  tags: 
-  - BCV
+  tags:
+    - BCV
   instrumentation:
     - name: programmer
       supplier: PAR
@@ -22,6 +22,13 @@ experimental:
     - name: X-Y recorder
       supplier: Houston Instrument
       model: 2000R
+  operationParameters:
+    temperature:
+      value: 25
+      unit: degC
+      uncertainty:
+        value: 1
+        unit: degC
 system:
   type: electrochemical
   electrolyte:
@@ -46,12 +53,6 @@ system:
         purity:
           value: 99.999
           unit: pct
-    temperature:
-      value: 25
-      unit: degC
-      uncertainty:
-        value: 1
-        unit: degC
   electrodes:
     - name: CE
       function: counter electrode
@@ -80,3 +81,4 @@ system:
           - Electrochemically polished in a phosphoric acid solution at constant voltage.
           - Thoroughly washed with pure water, cleaned in H2SO4 and washed again with pure water.
         url: http://dx.doi.org/10.2298/JSC0207531J
+echemdbSchemaVersion: 0.8.2

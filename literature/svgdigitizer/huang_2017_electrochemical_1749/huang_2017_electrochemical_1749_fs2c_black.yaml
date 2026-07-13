@@ -8,14 +8,18 @@ source:
   url: https://doi.org/10.1021/acscatal.6b03147
   citationKey: huang_2017_electrochemical_1749
   techniques:
-  - CV
+    - CV
 experimental:
-  tags: 
-  - BCV
+  tags:
+    - BCV
   instrumentation:
     - name: potentiostat
       manufacturer: Gamry Instruments
       model: Reference 600
+  operationParameters:
+    temperature:
+      value: 298
+      unit: K
 system:
   type: electrochemical
   electrolyte:
@@ -34,10 +38,7 @@ system:
           value: 99.98
           unit: pct
       - name: N2
-        type: gas 
-    temperature:
-      value: 298
-      unit: K
+        type: gas
   electrodes:
     - name: CE
       function: counter electrode
@@ -61,3 +62,4 @@ system:
         description:
           - Mechanically and electrochemically polished, diluted acid rinsing.
         url: https://doi.org/10.1021/acscatal.6b03147
+echemdbSchemaVersion: 0.8.2

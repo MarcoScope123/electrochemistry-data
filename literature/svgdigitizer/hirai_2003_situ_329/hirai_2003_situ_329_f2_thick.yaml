@@ -8,7 +8,7 @@ source:
   url: https://doi.org/10.1016/S0378-7753(02)00545-1
   citationKey: hirai_2003_situ_329
   techniques:
-  - CV
+    - CV
 system:
   type: electrochemical
   electrolyte:
@@ -26,8 +26,6 @@ system:
         source:
           supplier: Wako
           quality: Superior
-    temperature:
-      value: rt
   electrodes:
     - name: RE
       function: reference electrode
@@ -43,3 +41,8 @@ system:
         description:
           - Chemically polished with a mixed solution of acetic acid and hydrogen peroxide.
           - Washed with ethanol.
+experimental:
+  operationParameters:
+    temperature:
+      value: rt
+echemdbSchemaVersion: 0.8.2

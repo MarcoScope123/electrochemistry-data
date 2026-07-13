@@ -8,14 +8,18 @@ source:
   url: https://doi.org/10.1016/j.jelechem.2013.03.018
   citationKey: schouten_2013_electrochemical_6
   techniques:
-  - CV
+    - CV
 experimental:
-  tags: 
-  - BCV
+  tags:
+    - BCV
   instrumentation:
     - type: potentiostat
       manufacturer: Ivium
       name: A06075
+  operationParameters:
+    temperature:
+      value: 298
+      unit: K
 system:
   type: electrochemical
   electrolyte:
@@ -46,9 +50,6 @@ system:
           value: 5.0
     ph:
       value: 13
-    temperature:
-      value: 298
-      unit: K
   electrodes:
     - name: CE
       function: counter electrode
@@ -72,3 +73,4 @@ system:
       - name: glass
         part: cell
     cleaningProcedure: Boiled in ultra clean water.
+echemdbSchemaVersion: 0.8.2

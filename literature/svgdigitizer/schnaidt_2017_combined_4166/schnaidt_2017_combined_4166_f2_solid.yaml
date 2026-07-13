@@ -2,10 +2,14 @@
 # Details on the meta data structure can be found on https://github.com/echemdb/metadata-schema
 experimental:
   instrumentation:
-  - type: bipotentiostat
-    model:  AFCBP-1
-    manufacturer: Pine Instruments
-    name: Pine bipotentiostat
+    - type: bipotentiostat
+      model: AFCBP-1
+      manufacturer: Pine Instruments
+      name: Pine bipotentiostat
+  operationParameters:
+    temperature:
+      unit: K
+      value: 298.15
 system:
   type: electrochemical
   electrodes:
@@ -35,36 +39,33 @@ system:
         manufacturer: MaTecK GmbH
   electrolyte:
     components:
-    - name: H2O
-      proportion:
-        unit: volume percent
-        value: 100
-      source:
-        quality: ultrapure water
-        refinement: Millipore Milli-Q
-      type: solvent
-      chemicalIdentifiers:
-        cas: 7732-18-5
-        smiles: O
-    - concentration:
-        unit: mol / l
-        value: 0.5
-      name: H2SO4
-      source:
-        supplier: Merck Suprapur
-      type: acid
-      chemicalIdentifiers:
-        cas: 7664-93-9
-        smiles: OS(=O)(=O)O
-    - name: N2
-      type: gas
-      source:
-        supplier: MTI
-        purity:
-          grade: 6N
-    temperature:
-      unit: K
-      value: 298.15
+      - name: H2O
+        proportion:
+          unit: volume percent
+          value: 100
+        source:
+          quality: ultrapure water
+          refinement: Millipore Milli-Q
+        type: solvent
+        chemicalIdentifiers:
+          cas: 7732-18-5
+          smiles: O
+      - concentration:
+          unit: mol / l
+          value: 0.5
+        name: H2SO4
+        source:
+          supplier: Merck Suprapur
+        type: acid
+        chemicalIdentifiers:
+          cas: 7664-93-9
+          smiles: OS(=O)(=O)O
+      - name: N2
+        type: gas
+        source:
+          supplier: MTI
+          purity:
+            grade: 6N
     type: aqueous
 source:
   citationKey: schnaidt_2017_combined_4166
@@ -75,7 +76,8 @@ source:
     - ring disc
 curation:
   process:
-  - role: curator
-    name: Albert Engstfeld
-    orcid: https://orcid.org/0000-0002-9686-3948
-    date: 2022-05-23
+    - role: curator
+      name: Albert Engstfeld
+      orcid: https://orcid.org/0000-0002-9686-3948
+      date: 2022-05-23
+echemdbSchemaVersion: 0.8.2

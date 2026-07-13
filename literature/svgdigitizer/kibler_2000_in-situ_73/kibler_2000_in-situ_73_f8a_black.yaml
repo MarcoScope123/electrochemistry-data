@@ -14,8 +14,8 @@ system:
           refinement: Milli-Q
           quality: ultrapure water
         purity:
-          totalIonConductivity: { value: 18.2, unit: MOhm cm }
-          totalOrganicCarbon: { value: 3, unit: "ppb" }
+          totalIonConductivity: {value: 18.2, unit: MOhm cm}
+          totalOrganicCarbon: {value: 3, unit: "ppb"}
       - name: H2SO4
         type: acid
         source:
@@ -28,9 +28,6 @@ system:
     ph:
       value: 1.041
       comment: Estimated with CurTiPot on extraction from publication using a temperature of 25°C.
-    temperature:
-      value: 20
-      unit: deg_C
     comment: The electrolyte was at room temperature.
   electrodes:
     - name: REF
@@ -60,7 +57,13 @@ source:
   url: https://doi.org/10.1016/S0022-0728(00)00065-6
 curation:
   process:
-  - role: curator
-    name: Johannes M. Hermann
-    orcid: https://orcid.org/0000-0001-7119-1295
-    date: 2023-02-04
+    - role: curator
+      name: Johannes M. Hermann
+      orcid: https://orcid.org/0000-0001-7119-1295
+      date: 2023-02-04
+experimental:
+  operationParameters:
+    temperature:
+      value: 20
+      unit: deg_C
+echemdbSchemaVersion: 0.8.2

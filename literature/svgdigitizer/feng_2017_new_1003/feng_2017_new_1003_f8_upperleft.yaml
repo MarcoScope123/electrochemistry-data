@@ -8,6 +8,13 @@ experimental:
     - type: voltage function generator
       manufacturer: Agilent
       name: 33220A
+  operationParameters:
+    temperature:
+      value: 25
+      unit: degC
+      uncertainty:
+        value: 1
+        unit: degC
 system:
   type: electrochemical
   electrolyte:
@@ -32,12 +39,6 @@ system:
         concentration:
           value: 0.1
           unit: mol / l
-    temperature:
-      value: 25
-      unit: degC
-      uncertainty:
-        value: 1
-        unit: degC
   electrodes:
     - name: RE
       function: reference electrode
@@ -63,14 +64,15 @@ system:
         unit: pct
       preparationProcedure:
         description:
-           - POSC prepared by melting the tip of the wire using a hydrogen flame.
-           - Annealed in a methane flame continuously for 24 to 48 h.
+          - POSC prepared by melting the tip of the wire using a hydrogen flame.
+          - Annealed in a methane flame continuously for 24 to 48 h.
 source:
   citationKey: feng_2017_new_1003
   url: https://doi.org/10.1134/S1023193517090051
 curation:
   process:
-  - role: curator
-    name: Valerie Link
-    orcid: https://orcid.org/0009-0004-3341-1452
-    date: 2025-02-21
+    - role: curator
+      name: Valerie Link
+      orcid: https://orcid.org/0009-0004-3341-1452
+      date: 2025-02-21
+echemdbSchemaVersion: 0.8.2

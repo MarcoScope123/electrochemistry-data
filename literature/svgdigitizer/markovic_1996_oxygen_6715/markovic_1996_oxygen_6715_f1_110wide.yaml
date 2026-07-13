@@ -8,7 +8,7 @@ source:
   url: https://doi.org/10.1021/jp9533382
   citationKey: markovic_1996_oxygen_6715
   techniques:
-  - CV
+    - CV
 system:
   type: electrochemical
   electrolyte:
@@ -25,9 +25,6 @@ system:
           unit: mol / l
         source:
           supplier: J. T. Baker Reagent
-    temperature:
-      value: 298
-      unit: K
   electrodes:
     - name: WE
       function: working electrode
@@ -42,3 +39,9 @@ system:
           - flame annealed.
           - cooled in hydrogen atmosphere.
         url: https://doi.org/10.1021/j100011a001
+experimental:
+  operationParameters:
+    temperature:
+      value: 298
+      unit: K
+echemdbSchemaVersion: 0.8.2

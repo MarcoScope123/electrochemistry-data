@@ -2,9 +2,13 @@
 # Details on the meta data structure can be found on https://github.com/echemdb/metadata-schema
 experimental:
   instrumentation:
-  - manufacturer: Ivium Technologies
-    name: Compactstat
-    type: potentiostat
+    - manufacturer: Ivium Technologies
+      name: Compactstat
+      type: potentiostat
+  operationParameters:
+    temperature:
+      unit: K
+      value: 298.15
 system:
   type: electrochemical
   electrodes:
@@ -19,48 +23,46 @@ system:
         manufacturer: Mateck
       material: Au
       preparationProcedure:
-         description:
-         - Flame annealing in butane flame.
+        description:
+          - Flame annealing in butane flame.
       shape:
         type: disk
   electrolyte:
     components:
-    - name: BMPyr-TFSI
-      chemicalIdentifiers:
-        cas: 223437-11-4
-        inchi: InChI=1S/C9H20N.C2F6NO4S2/c1-3-4-7-10(2)8-5-6-9-10;3-1(4,5)14(10,11)9-15(12,13)2(6,7)8/h3-9H2,1-2H3;/q+1;-1
-      proportion:
-        unit: volume percent
-        value: 100
-      source:
-        supplier: IoLiTec
-      purity:
-        refinement: Vacuum dried at 100°C for 12 h, water content 225 ppm.
-      type: solvent
-    temperature:
-      unit: K
-      value: 298.15
+      - name: BMPyr-TFSI
+        chemicalIdentifiers:
+          cas: 223437-11-4
+          inchi: InChI=1S/C9H20N.C2F6NO4S2/c1-3-4-7-10(2)8-5-6-9-10;3-1(4,5)14(10,11)9-15(12,13)2(6,7)8/h3-9H2,1-2H3;/q+1;-1
+        proportion:
+          unit: volume percent
+          value: 100
+        source:
+          supplier: IoLiTec
+        purity:
+          refinement: Vacuum dried at 100°C for 12 h, water content 225 ppm.
+        type: solvent
     type: ionic liquid
   atmosphere:
     type: glovebox
     components:
-    - name: Ar
-      proportion:
-        value: 100
-      type: gas
+      - name: Ar
+        proportion:
+          value: 100
+        type: gas
 source:
   citationKey: wen_2015_potential-dependent_6062
   url: https://doi.org/10.1002/anie.201501715
   techniques:
-  - CV
-  - STM
+    - CV
+    - STM
 curation:
   process:
-  - role: curator
-    name: Maren-Kathrin Heubach
-    orcid: https://orcid.org/0000-0002-3769-7169
-    date: 2022-08-24
-  - role: reviewer
-    name: Albert Engstfeld
-    orcid: https://orcid.org/0000-0002-9686-3948
-    date: 2024-02-29
+    - role: curator
+      name: Maren-Kathrin Heubach
+      orcid: https://orcid.org/0000-0002-3769-7169
+      date: 2022-08-24
+    - role: reviewer
+      name: Albert Engstfeld
+      orcid: https://orcid.org/0000-0002-9686-3948
+      date: 2024-02-29
+echemdbSchemaVersion: 0.8.2
