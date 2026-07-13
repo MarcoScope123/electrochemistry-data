@@ -157,6 +157,20 @@
       },
       {
         "person_or_org": {
+          "family_name": "Strmčnik",
+          "given_name": "Dušan",
+          "name": "Strmčnik, Dušan",
+          "type": "personal",
+          "identifiers": [
+            { "scheme": "orcid", "identifier": "0000-0002-3021-2771" }
+          ]
+        },
+        "affiliations": [
+          { "name": "National Institute of Chemistry", "id": "050mac570" }
+        ]
+      },
+      {
+        "person_or_org": {
           "family_name": "Hörmann",
           "given_name": "Nicolas G.",
           "name": "Hörmann, Nicolas G.",
